@@ -89,7 +89,13 @@ export class CircleCIPipelineTrigger {
     if (this.metaData.length > 0) {
       this.parameters.GHA_Meta = this.metaData;
     }
-    body[this.tag ? "tag" : "branch"] = this.tag || this.branch;
+    const branch = getInput("target-branch");
+    info(`Branch: ${branch}`);
+    if (branch) {
+      body["branch"] = branch;
+    } else {
+      body[this.tag ? "tag" : "branch"] = this.tag || this.branch;
+    }
     info(`Triggering CircleCI Pipeline for ${this.owner}/${this.repo}`);
     info(`  Triggering URL: ${this.url}`);
     const trigger = this.tag ? `tag: ${this.tag}` : `branch: ${this.branch}`;
